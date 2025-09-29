@@ -1,7 +1,7 @@
 'use strict';
 const MANIFEST = 'flutter-app-manifest';
  
-const CACHE_NAME = 'flutter-app-cache';
+const CACHE_NAME = 'flutter-app-cache-v1';
 
 const RESOURCES = ["assets/AssetManifest.bin",
 "assets/AssetManifest.bin.json",
@@ -47,20 +47,23 @@ const RESOURCES = ["assets/AssetManifest.bin",
  
  
 
-self.addEventListener('install', event => {
+
+// Установка SW и кэширование ядра
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(Object.keys(RESOURCES));
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(CORE);
     })
   );
-  self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
+// Активация: удаляем старые кэши
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys =>
+    caches.keys().then((keys) =>
       Promise.all(
-        keys.map(key => {
+        keys.map((key) => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
@@ -71,25 +74,33 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  const resourceKey = url.pathname.substring(1) || "/";
-
-  if (RESOURCES[resourceKey]) {
+// Интерцепция запросов
+self.addEventListener('fetch', (event) => {
+  // Для переходов (navigation) всегда index.html
+  if (event.request.mode === 'navigate') {
     event.respondWith(
-      caches.open(CACHE_NAME).then(cache =>
-        cache.match(event.request).then(resp => {
-          return (
-            resp ||
-            fetch(event.request).then(networkResp => {
-              cache.put(event.request, networkResp.clone());
-              return networkResp;
-            })
-          );
-        })
-      )
+      caches.match('index.html').then((response) => {
+        return (
+          response ||
+          fetch(event.request).catch(() => caches.match('index.html'))
+        );
+      })
     );
-  } else {
-    event.respondWith(fetch(event.request));
+    return;
   }
+
+  // Для остальных — cache first
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return (
+        response ||
+        fetch(event.request).then((networkResponse) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          });
+        })
+      );
+    })
+  );
 });
