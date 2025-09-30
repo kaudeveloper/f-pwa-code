@@ -41,9 +41,7 @@ const RESOURCES = [
 "version.json",
 "main.dart.js",
 "index.html",
-"flutter_bootstrap.js",
-"assets/AssetManifest.bin.json",
-"assets/FontManifest.json"];
+"flutter_bootstrap.js"];
  
  
 
