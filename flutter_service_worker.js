@@ -38,6 +38,7 @@ const RESOURCES = [
 "index.html",
 "main.dart.js",
 "manifest.json",
+"assets/fonts/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2",
 "version.json"];
  
  
