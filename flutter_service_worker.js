@@ -36,12 +36,10 @@ const RESOURCES = [
 "icons/Icon-maskable-192.png",
 "icons/Icon-maskable-512.png",
 "index.html",
+"/",
 "main.dart.js",
 "manifest.json",
-"version.json",
-"main.dart.js",
-"index.html",
-"flutter_bootstrap.js"];
+"version.json"];
  
  
 
