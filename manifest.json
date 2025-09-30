@@ -1,6 +1,6 @@
 {
-    "name": "Генератор кода",
-    "short_name": "Генератор",
+    "name": "code_generator",
+    "short_name": "code_generator",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
