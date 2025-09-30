@@ -3,7 +3,8 @@ const MANIFEST = 'flutter-app-manifest';
  
 const CACHE_NAME = 'flutter-app-cache-v1';
 
-const RESOURCES = ["assets/AssetManifest.bin",
+const RESOURCES = [
+  "assets/AssetManifest.bin",
 "assets/AssetManifest.bin.json",
 "assets/AssetManifest.json",
 "assets/FontManifest.json",
@@ -16,7 +17,7 @@ const RESOURCES = ["assets/AssetManifest.bin",
 "assets/packages/font_awesome_flutter/lib/fonts/Font%2520Awesome%25207%2520Free-Solid-900.otf",
 "assets/shaders/ink_sparkle.frag",
 "canvaskit/canvaskit.js",
-"canvaskit/canvaskit.js.symbols" ,
+"canvaskit/canvaskit.js.symbols",
 "canvaskit/canvaskit.wasm",
 "canvaskit/chromium/canvaskit.js",
 "canvaskit/chromium/canvaskit.js.symbols",
@@ -35,6 +36,7 @@ const RESOURCES = ["assets/AssetManifest.bin",
 "icons/Icon-maskable-192.png",
 "icons/Icon-maskable-512.png",
 "index.html",
+"/",
 "main.dart.js",
 "manifest.json",
 "version.json",
@@ -52,7 +54,12 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(RESOURCES);
+      try {
+        return cache.addAll(RESOURCES);
+      } catch (error) {
+        console.error("ОШИБКА:", error.message);
+      }
+   
     })
   );
 });
